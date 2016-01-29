@@ -1,0 +1,9 @@
+[submodule "openssl"]
+	path = openssl
+	url = git@github.com:bheesham/openssl.git
+[submodule "libressl"]
+	path = libressl
+	url = git@github.com:bheesham/libressl-portable.git
+[submodule "boringssl"]
+	path = boringssl
+	url = git@github.com:bheesham/boringssl.git
