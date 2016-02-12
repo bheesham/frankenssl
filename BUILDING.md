@@ -9,7 +9,8 @@ examples are also documented here.
 
 ## Building dependencies
 
-First, each of the dependencies must be built.
+First, each of the dependencies must be built with symbol versioning enabled.
+OpenSSL, by default, will export symbol versions. LibreSSL and BoringSSL do not.
 
 Building each of the dependencies is fairly straightforward and well documented
 within each of their respective documentation.
@@ -19,23 +20,23 @@ git submodule update --init
 pushd boringssl
 mkdir build
 pushd build
-cmake ..
+cmake .. -DBUILD_SHARED_LIBS=on \
+         -DCMAKE_C_FLAGS="-fvisibility=default -Wl,--version-script=`pwd`/../symbols.map"
+make
 popd
 popd
 
 pushd libressl
 ./autogen
-mkdir build
-pushd build
-cmake ..
-popd
-popd
-
-pushd openssl
-./config
+LDFLAGS=-Wl,--version-script=`pwd`/symbols.map ./configure
 make
 popd
 
+pushd openssl
+./config shared
+make depend
+make
+popd
 ```
 
 ## Building HST
@@ -44,10 +45,14 @@ Next up, it's time to build the hst to each of the projects. It is required that
 this directory structure is kept, as we cannot rely on the installation settings
 for OpenSSL, BoringSSL, nor LibreSSL.
 
+You have the option to add verbosity to the library, which will print which
+implementation of a specified function to `stdout`. Simply add `-D__HST=on` as a
+flag to CMake.
+
 ```bash
-pushd hst/build
+pushd libhst/build
 cmake ..
-make -j 4
+make
 popd
 ```
 
@@ -56,10 +61,12 @@ popd
 Examples can be run by running the following:
 
 ```bash
-pushd hst/build
-./bin/init # Will output 0
-LD_PRELOAD=lib/libhstboring.so ./bin/init # Will output 1
-LD_PRELOAD=lib/libhstlibre.so ./bin/init  # Will output 2
-LD_PRELOAD=lib/libhstopen.so ./bin/init   # Will output 3
-popd
+pushd libhst/build
+
+# Take a look at all the linked libraries.
+LD_PRELOAD="lib/libhstopen_init.so lib/libhstlibre_deinit.so lib/libhstopen_version.so" ldd ./bin/init
+
+# init using OpenSSL, deinit using LibreSSL, and lie to the client to say we're
+# using OpenSSL.
+LD_PRELOAD="lib/libhstopen_init.so lib/libhstlibre_deinit.so lib/libhstopen_version.so" ./bin/init
 ```

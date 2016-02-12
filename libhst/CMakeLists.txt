@@ -12,8 +12,10 @@ link_directories(${PROJECT_BINARY_DIR}/lib)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+add_definitions(-D__HST=1)
+
 add_subdirectory(stub)
-add_subdirectory(boring)
-add_subdirectory(libre)
 add_subdirectory(open)
+add_subdirectory(libre)
+add_subdirectory(boring)
 add_subdirectory(examples)
