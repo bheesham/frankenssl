@@ -27,7 +27,7 @@ popd
 popd
 
 pushd libressl
-./autogen
+./autogen.sh
 LDFLAGS=-Wl,--version-script=`pwd`/symbols.map ./configure
 make
 popd
