@@ -5,7 +5,7 @@ HST
 
 For instructions for how to build this project see `BUILDING.md`.
 
-The logo was created by Olivia Plazk.
+The logo was created by Olivia Plzak.
 
 Licensing information can be found the `LICENSE` file.
 OpenSSL, BoringSSL, and LibreSSL are licensed under their respective licenses.
